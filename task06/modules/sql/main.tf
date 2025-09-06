@@ -33,7 +33,6 @@ resource "azurerm_mssql_database" "sql_database" {
   name           = var.sql_db_name
   server_id      = azurerm_mssql_server.sql_server.id
   collation      = "SQL_Latin1_General_CP1_CI_AS"
-  max_size_gb    = 32
   sku_name       = "S2"
   zone_redundant = false
 
