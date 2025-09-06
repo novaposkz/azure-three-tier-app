@@ -37,4 +37,6 @@ module "webapp" {
   sql_connection_string = module.sql.sql_connection_string
   dotnet_version        = "8.0"
   tags                  = var.tags
+
+  depends_on = [module.sql]
 }
