@@ -30,11 +30,11 @@ module "sql" {
 module "webapp" {
   source = "./modules/webapp"
 
-  resource_group_name = azurerm_resource_group.main.name
-  location            = var.location
-  asp_name            = local.asp_name
-  app_name            = local.app_name
+  resource_group_name   = azurerm_resource_group.main.name
+  location              = var.location
+  asp_name              = local.asp_name
+  app_name              = local.app_name
   sql_connection_string = module.sql.sql_connection_string
-  dotnet_version      = "8.0"
-  tags                = var.tags
+  dotnet_version        = "8.0"
+  tags                  = var.tags
 }
