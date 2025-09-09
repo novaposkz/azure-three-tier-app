@@ -7,19 +7,19 @@ variable "name_prefix" {
 variable "location" {
   description = "Azure region"
   type        = string
-  default     = "centralus"
+  default     = "Central US"
 }
 
-variable "key_vault_name" {
+variable "kv_rg_name" {
+  description = "Existing Key Vault resource group name"
+  type        = string
+  default     = "cmaz-f4p05tns-mod6-kv-rg"
+}
+
+variable "kv_name" {
   description = "Existing Key Vault name"
   type        = string
   default     = "cmaz-f4p05tns-mod6-kv"
-}
-
-variable "key_vault_rg" {
-  description = "Existing Key Vault resource group"
-  type        = string
-  default     = "cmaz-f4p05tns-mod6-kv-rg"
 }
 
 variable "allowed_ip_address" {
@@ -27,7 +27,7 @@ variable "allowed_ip_address" {
   type        = string
 }
 
-variable "sql_admin_username" {
+variable "sql_admin_login" {
   description = "SQL admin username"
   type        = string
   default     = "sqladmin"

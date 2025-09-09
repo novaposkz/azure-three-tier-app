@@ -1,13 +1,16 @@
 locals {
-  name_prefix = "cmaz-f4p05tns-mod6"
+  rg_name         = format("%s-rg", var.name_prefix)
+  sql_server_name = format("%s-sql", var.name_prefix)
+  sql_db_name     = format("%s-sql-db", var.name_prefix)
+  asp_name        = format("%s-asp", var.name_prefix)
+  app_name        = format("%s-app", var.name_prefix)
 
-  rg_name            = format("%s-rg", local.name_prefix)
-  sql_server_name    = format("%s-sql", local.name_prefix)
-  sql_db_name        = format("%s-sql-db", local.name_prefix)
-  asp_name           = format("%s-asp", local.name_prefix)
-  app_name           = format("%s-app", local.name_prefix)
-  firewall_rule_name = "allow-verification-ip"
+  sql_sku_name  = "S2"
+  plan_sku_name = "P0v3"
 
-  sql_admin_name_secret     = "sql-admin-name"
-  sql_admin_password_secret = "sql-admin-password"
+  fw_rule_allow_azure = "AllowAzureServices"
+  fw_rule_verify_ip   = "allow-verification-ip"
+
+  kv_secret_sql_admin_name     = "sql-admin-name"
+  kv_secret_sql_admin_password = "sql-admin-password"
 }
