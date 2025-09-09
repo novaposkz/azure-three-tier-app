@@ -1,22 +1,22 @@
-resource "azurerm_service_plan" "asp" {
+resource "azurerm_service_plan" "this" {
   name                = var.asp_name
-  resource_group_name = var.resource_group_name
   location            = var.location
+  resource_group_name = var.resource_group_name
   os_type             = "Linux"
-  sku_name            = "P0v3" # маленькая v!
-
-  tags = var.tags
+  sku_name            = var.sku_name
+  tags                = var.tags
 }
 
-resource "azurerm_linux_web_app" "webapp" {
+resource "azurerm_linux_web_app" "this" {
   name                = var.app_name
-  resource_group_name = var.resource_group_name
   location            = var.location
-  service_plan_id     = azurerm_service_plan.asp.id
+  resource_group_name = var.resource_group_name
+  service_plan_id     = azurerm_service_plan.this.id
   https_only          = true
+  tags                = var.tags
 
   site_config {
-    always_on  = false
+    always_on  = true
     ftps_state = "Disabled"
 
     application_stack {
@@ -24,12 +24,10 @@ resource "azurerm_linux_web_app" "webapp" {
     }
   }
 
-  # Connection string для Web App (правильное имя!)
+  # App Connection String (shows up in Configuration > Connection strings)
   connection_string {
-    name  = "DefaultConnection" # именно такое имя!
+    name  = "DefaultConnection"
     type  = "SQLAzure"
     value = var.sql_connection_string
   }
-
-  tags = var.tags
 }

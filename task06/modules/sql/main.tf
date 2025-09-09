@@ -1,4 +1,5 @@
-resource "random_password" "sql_password" {
+# Generate a strong SQL admin password (avoid ';' etc. to keep conn string clean)
+resource "random_password" "sql_admin" {
   length           = 20
   special          = true
   override_special = "!#$%&*+-_=?"
@@ -7,61 +8,64 @@ resource "random_password" "sql_password" {
   min_numeric      = 1
 }
 
-resource "azurerm_mssql_server" "sql_server" {
-  name                          = var.sql_server_name
+resource "azurerm_mssql_server" "this" {
+  name                          = var.server_name
   resource_group_name           = var.resource_group_name
   location                      = var.location
   version                       = "12.0"
-  administrator_login           = var.admin_username
-  administrator_login_password  = random_password.sql_password.result
+  administrator_login           = var.sql_admin_login
+  administrator_login_password  = random_password.sql_admin.result
   minimum_tls_version           = "1.2"
   public_network_access_enabled = true
-
-  tags = var.tags
+  tags                          = var.tags
 }
 
-resource "azurerm_mssql_firewall_rule" "allow_azure_services" {
-  name             = "AllowAzureServices"
-  server_id        = azurerm_mssql_server.sql_server.id
+# Allow Azure services
+resource "azurerm_mssql_firewall_rule" "azure_services" {
+  name      = var.azure_services_rule_name
+  server_id = azurerm_mssql_server.this.id
+
   start_ip_address = "0.0.0.0"
   end_ip_address   = "0.0.0.0"
 }
 
-resource "azurerm_mssql_firewall_rule" "allow_specific_ip" {
-  name             = var.firewall_rule_name
-  server_id        = azurerm_mssql_server.sql_server.id
+# Allow a specific IP (your machine during dev, then verification agent)
+resource "azurerm_mssql_firewall_rule" "verify_ip" {
+  name      = var.verification_rule_name
+  server_id = azurerm_mssql_server.this.id
+
   start_ip_address = var.allowed_ip_address
   end_ip_address   = var.allowed_ip_address
 }
 
-resource "azurerm_mssql_database" "sql_database" {
-  name           = var.sql_db_name
-  server_id      = azurerm_mssql_server.sql_server.id
-  sku_name       = "S2"
+resource "azurerm_mssql_database" "this" {
+  name           = var.db_name
+  server_id      = azurerm_mssql_server.this.id
+  sku_name       = var.sku_name
   collation      = "SQL_Latin1_General_CP1_CI_AS"
   zone_redundant = false
-
-  tags = var.tags
+  tags           = var.tags
 }
 
+# Store credentials in the existing Key Vault
 resource "azurerm_key_vault_secret" "sql_admin_name" {
-  name         = "sql-admin-name"
-  value        = var.admin_username
+  name         = var.sql_admin_name_secret
+  value        = var.sql_admin_login
   key_vault_id = var.key_vault_id
 }
 
 resource "azurerm_key_vault_secret" "sql_admin_password" {
-  name         = "sql-admin-password"
-  value        = random_password.sql_password.result
+  name         = var.sql_admin_password_secret
+  value        = random_password.sql_admin.result
   key_vault_id = var.key_vault_id
 }
 
 locals {
   adonet_conn_string = format(
     "Server=tcp:%s,1433;Initial Catalog=%s;Persist Security Info=False;User ID=%s;Password=%s;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;",
-    azurerm_mssql_server.sql_server.fully_qualified_domain_name,
-    azurerm_mssql_database.sql_database.name,
-    var.admin_username,
-    random_password.sql_password.result
+    azurerm_mssql_server.this.fully_qualified_domain_name,
+    azurerm_mssql_database.this.name,
+    var.sql_admin_login,
+    random_password.sql_admin.result
   )
 }
