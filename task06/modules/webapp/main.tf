@@ -3,9 +3,8 @@ resource "azurerm_service_plan" "asp" {
   resource_group_name = var.resource_group_name
   location            = var.location
   os_type             = "Linux"
-  sku_name            = "P0V3"
-
-  tags = var.tags
+  sku_name            = "P0v3"
+  tags                = var.tags
 }
 
 resource "azurerm_linux_web_app" "webapp" {
