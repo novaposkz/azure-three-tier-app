@@ -7,7 +7,7 @@ variable "name_prefix" {
 variable "location" {
   description = "Azure region"
   type        = string
-  default     = "Central US"
+  default     = "centralus"
 }
 
 variable "key_vault_name" {
