@@ -21,7 +21,7 @@ module "sql" {
   sql_db_name         = local.sql_db_name
   key_vault_id        = data.azurerm_key_vault.existing.id
   admin_username      = var.sql_admin_username
-  firewall_rule_name  = local.firewall_rule_name
+  firewall_rule_name  = "allow-verification-ip"
   allowed_ip_address  = var.allowed_ip_address
   tags                = var.tags
 }
