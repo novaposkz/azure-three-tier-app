@@ -13,7 +13,7 @@ module "sql" {
   source = "./modules/sql"
 
   resource_group_name = azurerm_resource_group.rg.name
-  location            = var.location
+  location            = azurerm_resource_group.rg.location
   server_name         = local.sql_server_name
   db_name             = local.sql_db_name
   sku_name            = local.sql_sku_name
@@ -35,7 +35,7 @@ module "webapp" {
   source = "./modules/webapp"
 
   resource_group_name = azurerm_resource_group.rg.name
-  location            = var.location
+  location            = azurerm_resource_group.rg.location
   asp_name            = local.asp_name
   app_name            = local.app_name
   sku_name            = local.plan_sku_name

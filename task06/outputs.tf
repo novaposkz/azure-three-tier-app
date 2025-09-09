@@ -5,5 +5,5 @@ output "sql_server_fqdn" {
 
 output "app_hostname" {
   description = "Linux Web App hostname"
-  value       = module.webapp.app_hostname
+  value       = module.webapp.hostname
 }
